@@ -6,8 +6,8 @@ public class Npc {
     private String NAME;
     private char SIGN;
     private int NUMBERS_RANGE;
-    private int X;
-    private int Y;
+    private int ROW;
+    private int COLUMN;
 
     public Npc(String NAME) {
         this.NAME = NAME;
@@ -17,8 +17,8 @@ public class Npc {
         Random generator = new Random();
         int x = generator.nextInt(getNUMBERS_RANGE());
         int y = generator.nextInt(getNUMBERS_RANGE());
-        setX(x);
-        setY(y);
+        setROW(x);
+        setCOLUMN(y);
     }
 
     public char getSIGN() {
@@ -37,20 +37,20 @@ public class Npc {
         return NUMBERS_RANGE;
     }
 
-    private void setX(int x) {
-        X = x;
+    private void setROW(int ROW) {
+        this.ROW = ROW;
     }
 
-    private void setY(int y) {
-        Y = y;
+    private void setCOLUMN(int COLUMN) {
+        this.COLUMN = COLUMN;
     }
 
-    public int getX() {
-        return X;
+    public int getROW() {
+        return ROW;
     }
 
-    public int getY() {
-        return Y;
+    public int getCOLUMN() {
+        return COLUMN;
     }
 
     public String getNAME() {

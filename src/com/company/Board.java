@@ -27,7 +27,7 @@ public class Board
         if(isPlayersTurn){
             printBoard(isPlayersTurn);
             playersMove();
-            if(victory(isPlayersTurn)){
+            if(hasWon(isPlayersTurn)){
                 setGAME_OVER(true);
                 System.out.println(printWinnerMessage(isPlayersTurn));
             }
@@ -36,54 +36,63 @@ public class Board
         else{
             printBoard(isPlayersTurn);
             npcMove();
-            if(victory(isPlayersTurn)){
+            if(hasWon(isPlayersTurn)){
                 setGAME_OVER(true);
                 System.out.println(printWinnerMessage(isPlayersTurn));
             }
             PLAYER.setPLAYERS_TURN(true);
         }
-        if(noMoreSpace()) {
+        if(allFieldsTaken()) {
             System.out.println("Koniec gry. Wszystkie miejsca na planszy wykorzystane.");
             setGAME_OVER(true);
         }
+
     }
 
-    private boolean noMoreSpace(){
+    private boolean allFieldsTaken(){
         return TAKEN_FIELDS >= 9;
     }
 
-    private boolean victory(boolean isPlayersTurn){
-        int count = 0;
+    private boolean hasWon(boolean isPlayersTurn){
         char sign;
-        int x;
-        int y;
+        int rowNumber;
+        int columnNumber;
         if (isPlayersTurn){
             sign = PLAYER.getSIGN();
-            x = PLAYER.getX();
-            y = PLAYER.getY();
+            rowNumber = PLAYER.getROW();
+            columnNumber = PLAYER.getCOLUMN();
         }
         else{
             sign = NPC.getSIGN();
-            x = NPC.getX();
-            y = NPC.getY();
+            rowNumber = NPC.getROW();
+            columnNumber = NPC.getCOLUMN();
         }
-
-        for (int i = 0; i < BOARD_SIZE; i++){
-            if(MATRIX[x][i] == sign)
-                count++;
-        }
-        if(count == 3)
+        if (hasThreeInRow(sign, rowNumber))
+            return true;
+        else if (hatThreeInColumn(sign, columnNumber))
             return true;
         else
-            count = 0;
+            return hasThreeInDiagonal(sign);
 
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if(MATRIX[i][y] == sign)
+    }
+
+    private boolean hasThreeInRow(char sign, int rowNumber){
+        int count = 0;
+        for (int i = 0; i < BOARD_SIZE; i++){
+            if(MATRIX[rowNumber][i] == sign)
                 count++;
         }
-        if(count == 3)
-            return true;
-
+        return count == 3;
+    }
+    private boolean hatThreeInColumn(char sign, int columnNumber){
+        int count = 0;
+        for (int i = 0; i < BOARD_SIZE; i++) {
+            if(MATRIX[i][columnNumber] == sign)
+                count++;
+        }
+        return count == 3;
+    }
+    private boolean hasThreeInDiagonal(char sign){
         return (MATRIX[0][0] == sign && MATRIX[1][1] == sign && MATRIX[2][2] == sign) ||
                 (MATRIX[0][2] == sign && MATRIX[1][1] == sign && MATRIX[2][0] == sign);
     }
@@ -91,8 +100,8 @@ public class Board
     private void playersMove(){
         PLAYER.setCoordinates();
         char sign = PLAYER.getSIGN();
-        int x = PLAYER.getX();
-        int y = PLAYER.getY();
+        int x = PLAYER.getROW();
+        int y = PLAYER.getCOLUMN();
 
         if(canPlaceSign(x, y)) {
             MATRIX[x][y] = sign;
@@ -107,8 +116,8 @@ public class Board
     private void npcMove(){
         NPC.generateCoordinates();
         char sign = NPC.getSIGN();
-        int x = NPC.getX();
-        int y = NPC.getY();
+        int x = NPC.getROW();
+        int y = NPC.getCOLUMN();
 
         if(canPlaceSign(x, y)){
             MATRIX[x][y] = sign;
@@ -124,10 +133,7 @@ public class Board
     }
 
     private String printWinnerMessage(boolean isPlayersTurn){
-        String playerWinns = PLAYER.getNAME() + " wygrywa!";
-        String npcWinns = NPC.getNAME() + " wygrywa!";
-
-        return isPlayersTurn ? playerWinns : npcWinns;
+        return isPlayersTurn ? PLAYER.getNAME() + " wygrywa!" : NPC.getNAME() + " wygrywa!";
     }
 
     public void printBoard(boolean isPlayersTurn) throws InterruptedException {
@@ -135,6 +141,7 @@ public class Board
             if(isPlayersTurn)
                 Thread.sleep(2500);
         }
+
         System.out.println("   0    1    2");
         for (int i = 0; i < BOARD_SIZE; i++)
         {

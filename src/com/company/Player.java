@@ -7,8 +7,8 @@ public class Player {
 
     private String NAME;
     private char SIGN;
-    private int X;
-    private int Y;
+    private int ROW;
+    private int COLUMN;
     private boolean PLAYERS_TURN;
 
     public Player(String NAME, char SIGN, boolean PLAYERS_TURN) {
@@ -23,24 +23,24 @@ public class Player {
 
     public void setCoordinates(){
         System.out.println("Podaj numer wiersza oraz kolumny: ");
-        setX(scanner.nextInt());
-        setY(scanner.nextInt());
+        setROW(scanner.nextInt());
+        setCOLUMN(scanner.nextInt());
     }
 
-    private void setX(int x) {
-        this.X = x;
+    private void setROW(int ROW) {
+        this.ROW = ROW;
     }
 
-    private void setY(int y) {
-        this.Y = y;
+    private void setCOLUMN(int COLUMN) {
+        this.COLUMN = COLUMN;
     }
 
-    public int getX() {
-        return X;
+    public int getROW() {
+        return ROW;
     }
 
-    public int getY() {
-        return Y;
+    public int getCOLUMN() {
+        return COLUMN;
     }
 
     public void setPLAYERS_TURN(boolean PLAYERS_TURN) {
