@@ -5,53 +5,40 @@ import java.util.Scanner;
 public class Player {
     Scanner scanner = new Scanner(System.in);
 
-    private String NAME;
-    private char SIGN;
-    private int ROW;
-    private int COLUMN;
-    private boolean PLAYERS_TURN;
+    private boolean IS_HUMAN;
+    private final char SIGN;
+    private boolean MAKES_MOVE;
+    private Point POINT;
 
-    public Player(String NAME, char SIGN, boolean PLAYERS_TURN) {
-        this.NAME = NAME;
-        this.SIGN = SIGN;
-        this.PLAYERS_TURN = PLAYERS_TURN;
+    public Player(boolean is_human, char sign, boolean makesMove) {
+        this.IS_HUMAN = is_human;
+        this.SIGN = sign;
+        this.MAKES_MOVE = makesMove;
     }
 
     public char getSIGN() {
         return SIGN;
     }
 
-    public void setCoordinates(){
-        System.out.println("Podaj numer wiersza oraz kolumny: ");
-        setROW(scanner.nextInt());
-        setCOLUMN(scanner.nextInt());
+    public Point getPOINT() {
+        return POINT;
     }
 
-    private void setROW(int ROW) {
-        this.ROW = ROW;
+    public void setPOINT() {
+        int x = scanner.nextInt();
+        int y = scanner.nextInt();
+        this.POINT = new Point(x, y);
     }
 
-    private void setCOLUMN(int COLUMN) {
-        this.COLUMN = COLUMN;
+    public void setPOINT(int x, int y){
+        this.POINT = new Point(x, y);
     }
 
-    public int getROW() {
-        return ROW;
+    public boolean isMAKES_MOVE() {
+        return MAKES_MOVE;
     }
 
-    public int getCOLUMN() {
-        return COLUMN;
-    }
-
-    public void setPLAYERS_TURN(boolean PLAYERS_TURN) {
-        this.PLAYERS_TURN = PLAYERS_TURN;
-    }
-
-    public boolean getPLAYERS_TURN() {
-        return PLAYERS_TURN;
-    }
-
-    public String getNAME() {
-        return NAME;
+    public void setMAKES_MOVE(boolean MAKES_MOVE) {
+        this.MAKES_MOVE = MAKES_MOVE;
     }
 }
