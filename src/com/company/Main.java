@@ -3,8 +3,8 @@ package com.company;
 public class Main {
     public static void main(String[] args) throws NullPointerException {
 
-        Player firstPlayer = new Player(true, 'X', true);
-        Player secondPlayer = new Player(false, 'o', false);
+        Player firstPlayer = new Player(true, 'x', false);
+        Player secondPlayer = new Player(false, 'o', true);
 
         Board board = new Board(firstPlayer, secondPlayer);
         board.setGAME_OVER(false);
@@ -15,7 +15,7 @@ public class Main {
                 board.setGAME_OVER(true);
             }
             else{
-                board.game();
+                board.gameEngine();
             }
         }
 

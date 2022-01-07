@@ -1,9 +1,8 @@
 package com.company;
 
+import java.util.Arrays;
+
 public class Board {
-
-    int TURN = 0;
-
     private Player HUMAN;
     private Player AI;
     private char[][] BOARD;
@@ -23,16 +22,15 @@ public class Board {
         createBoard(BOARD_SIZE, BOARD);
     }
 
-    public void game() {
-        boolean victory = false;
-
+    public void gameEngine() {
         if (HUMAN.isMAKES_MOVE()) {
             humansMove(HUMAN, AI, BOARD);
 
             if (winningRow(HUMAN.getSIGN(), BOARD) ||
                     winningColumn(HUMAN.getSIGN(), BOARD) ||
                     winningDiagonal(HUMAN.getSIGN(), BOARD)) {
-                victory = true;
+                System.out.println(winnerMessage());
+                setGAME_OVER(true);
             }
 
         } else {
@@ -41,13 +39,9 @@ public class Board {
             if (winningRow(AI.getSIGN(), BOARD) ||
                     winningColumn(AI.getSIGN(), BOARD) ||
                     winningDiagonal(AI.getSIGN(), BOARD)) {
-                victory = true;
+                System.out.println(winnerMessage());
+                setGAME_OVER(true);
             }
-        }
-
-        if (victory){
-            System.out.println(winnerMessage(HUMAN));
-            setGAME_OVER(true);
         }
 
         FIELDS_TAKEN++;
@@ -67,7 +61,7 @@ public class Board {
         human.setPOINT();
         if (!(board[human.getPOINT().getX()][human.getPOINT().getY()] == EMPTY_CELL)) {
             unavailableFieldMessage();
-            game();
+            gameEngine();
         }
 
         board[human.getPOINT().getX()][human.getPOINT().getY()] = human.getSIGN();
@@ -78,11 +72,6 @@ public class Board {
     private void aiMove(Player ai, Player human, char[][] board) {
         ai.setPOINT(findBestMove().getX(), findBestMove().getY());
 
-//        if (!(board[ai.getPOINT().getX()][ai.getPOINT().getY()] == EMPTY_CELL)){
-//            unavailableFieldMessage();
-//            game();
-//        }
-
         board[AI.getPOINT().getX()][AI.getPOINT().getY()] = AI.getSIGN();
         ai.setMAKES_MOVE(false);
         human.setMAKES_MOVE(true);
@@ -92,8 +81,8 @@ public class Board {
         System.out.println("To pole jest zajęte. Wybierz inne.");
     }
 
-    private String winnerMessage(Player human) {
-        return human.isMAKES_MOVE() ? "Komputer wygrał!" : "Gracz wygrał!";
+    private String winnerMessage() {
+        return HUMAN.isMAKES_MOVE() ? "Komputer wygrał!" : "Gracz wygrał!";
     }
 
     public boolean isGAME_OVER() {
@@ -116,14 +105,9 @@ public class Board {
         this.FIELDS_TAKEN = FIELDS_TAKEN;
     }
 
-    @Override
-    public String toString() {
-        return BOARD[0][0] + " | " + BOARD[0][1] + " | " + BOARD[0][2] + " | \n" +
-                BOARD[1][0] + " | " + BOARD[1][1] + " | " + BOARD[1][2] + " | \n" +
-                BOARD[2][0] + " | " + BOARD[2][1] + " | " + BOARD[2][2] + " | \n\n\n";
-    }
 
-    private void printBoard(char[][] board, int size) {
+
+        private void printBoard(char[][] board, int size) {
         for (int i = 0; i < size; i++) {
             System.out.print("| ");
             for (int j = 0; j < size; j++) {
@@ -179,14 +163,12 @@ public class Board {
             for (int j = 0; j < size; j++) {
                 if (board[i][j] == EMPTY_CELL) {
                     board[i][j] = ai.getSIGN();
-                    int score = minimax(false);
+                    int score = minimax(false, 0);
                     board[i][j] = EMPTY_CELL;
-                    if (score >= bestScore) {
+                    if (score > bestScore) {
                         bestScore = score;
                         bestPoint.setX(i);
                         bestPoint.setY(j);
-                        System.out.println("Returning best point " + bestPoint.toString());
-                        return bestPoint;
                     }
                 }
             }
@@ -194,14 +176,7 @@ public class Board {
         return bestPoint;
     }
 
-    private int minimax(boolean isMaximizing) {
-
-        TURN++;
-        System.out.println("Tura: " + TURN);
-        if (TURN >= 150) {
-            System.out.println("Tura >= 150");
-            return 0;
-        }
+    private int minimax(boolean isMaximizing, int depth) {
 
         if (winningRow(AI.getSIGN(), BOARD) || winningColumn(AI.getSIGN(), BOARD) || winningDiagonal(AI.getSIGN(), BOARD))
             return 1;
@@ -216,37 +191,30 @@ public class Board {
                 for (int j = 0; j < BOARD_SIZE; j++) {
                     if (BOARD[i][j] == EMPTY_CELL) {
                         BOARD[i][j] = AI.getSIGN();
-                        printBoard(BOARD, BOARD_SIZE);
-                        int score = minimax(false);
+                        int score = minimax(false, depth + 1);
                         BOARD[i][j] = EMPTY_CELL;
-                        printBoard(BOARD, BOARD_SIZE);
-                        if (score >= bestScore) {
+                        if (score > bestScore) {
                             bestScore = score;
-                            System.out.println("Returning best score: " + bestScore);
-                            return bestScore;
                         }
                     }
                 }
             }
+            return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
             for (int i = 0; i < BOARD_SIZE; i++) {
                 for (int j = 0; j < BOARD_SIZE; j++) {
                     if (BOARD[i][j] == EMPTY_CELL) {
                         BOARD[i][j] = HUMAN.getSIGN();
-                        printBoard(BOARD, BOARD_SIZE);
-                        int score = minimax(true);
+                        int score = minimax(true, depth + 1);
                         BOARD[i][j] = EMPTY_CELL;
-                        printBoard(BOARD, BOARD_SIZE);
-                        if (score <= bestScore) {
+                        if (score < bestScore) {
                             bestScore = score;
-                            System.out.println("Returning best score: " + bestScore);
-                            return bestScore;
                         }
                     }
                 }
             }
+            return bestScore;
         }
-        return 0;
     }
 }
