@@ -18,13 +18,14 @@ public class Board {
         BOARD_SIZE = 3;
         EMPTY_CELL = ' ';
 
-        this.BOARD = new char[BOARD_SIZE][BOARD_SIZE];
-        createBoard(BOARD_SIZE, BOARD);
+        this.BOARD = createBoard(BOARD_SIZE);
     }
 
     public void gameEngine() {
         if (HUMAN.isMAKES_MOVE()) {
-            humansMove(HUMAN, AI, BOARD);
+            humansMove(HUMAN, BOARD);
+            AI.setMAKES_MOVE(true);
+            HUMAN.setMAKES_MOVE(false);
 
             if (winningRow(HUMAN.getSIGN(), BOARD) ||
                     winningColumn(HUMAN.getSIGN(), BOARD) ||
@@ -34,7 +35,9 @@ public class Board {
             }
 
         } else {
-            aiMove(AI, HUMAN, BOARD);
+            aiMove(AI, BOARD);
+            AI.setMAKES_MOVE(false);
+            HUMAN.setMAKES_MOVE(true);
 
             if (winningRow(AI.getSIGN(), BOARD) ||
                     winningColumn(AI.getSIGN(), BOARD) ||
@@ -48,15 +51,17 @@ public class Board {
         printBoard(BOARD, BOARD_SIZE);
     }
 
-    private void createBoard(int boardSize, char[][] board) {
+    private char[][] createBoard(int boardSize) {
+        char [][] matrix = new char[boardSize][boardSize];
         for (int i = 0; i < boardSize; i++) {
             for (int j = 0; j < boardSize; j++) {
-                board[i][j] = EMPTY_CELL;
+                matrix[i][j] = EMPTY_CELL;
             }
         }
+        return matrix;
     }
 
-    private void humansMove(Player human, Player ai, char[][] board) {
+    private void humansMove(Player human, char[][] board) {
         System.out.println("Podaj dwie współrzędne");
         human.setPOINT();
         if (!(board[human.getPOINT().getX()][human.getPOINT().getY()] == EMPTY_CELL)) {
@@ -65,16 +70,12 @@ public class Board {
         }
 
         board[human.getPOINT().getX()][human.getPOINT().getY()] = human.getSIGN();
-        human.setMAKES_MOVE(false);
-        ai.setMAKES_MOVE(true);
     }
 
-    private void aiMove(Player ai, Player human, char[][] board) {
+    private void aiMove(Player ai, char[][] board) {
         ai.setPOINT(findBestMove().getX(), findBestMove().getY());
 
         board[AI.getPOINT().getX()][AI.getPOINT().getY()] = AI.getSIGN();
-        ai.setMAKES_MOVE(false);
-        human.setMAKES_MOVE(true);
     }
 
     private void unavailableFieldMessage() {
